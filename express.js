@@ -53,8 +53,6 @@ app.post('/fileUpload', function (req, res) { // 存檔...
 });
 
 app.post('/fileUpload_drap', function (req, res) { // 拖曳多檔存檔...
-	console.dir(req.files);
-	//return;
 	var uploadedFile = req.files.files;
 	var tmpPath = uploadedFile.path;
 	//var targetPath = './' + uploadedFile.name; //tmp檔名

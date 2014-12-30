@@ -30,18 +30,34 @@
 			function on_drop (e) {
 				e.preventDefault();
 				var files = e.dataTransfer.files;
-				var num = files.length;
+				var num = files.length-1;
 				var fd,xhr;
-				for (var i = 0; i < num; i++) {
+				upFile(num);
+				function upFile (key_) {
 					fd = new FormData();
-					fd.append('files',files[i]);
+					fd.append('files',files[key_]);
 	            	xhr = new XMLHttpRequest();
 	            	xhr.addEventListener("load", uploadComplete, false);
+	            	xhr.upload.addEventListener("progress", uploadProgress, false);
 	            	xhr.open("POST", "/fileUpload_drap");
 	  				xhr.send(fd);
-				};
+				}
             	function uploadComplete (e) {
-            		drag_file.innerHTML = "uploadComplete!"+num;
+            		console.log("unable to compute "+num);
+            		drag_file.innerHTML = "uploadComplete!";
+            		if(num>0){
+            			num--;
+            			upFile(num);
+            		}
+            	}
+            	function uploadProgress (evt) {
+            		if (evt.lengthComputable) {
+					    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+					    console.log(percentComplete.toString() + '%'); ;
+					}
+					else {
+						console.log("unable to compute");
+					}
             	}
 			}
 		}
