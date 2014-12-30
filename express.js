@@ -21,9 +21,40 @@ app.get('/', function (req, res) {
 		}
 	});
 });
+/**
+ * 拖曳
+ */
+app.get('/d', function (req, res) {
+	fs.readFile("./darp.html", "utf8",function  (err,html) {
+		// 讀檔...
+		if(!err){
+			res.send(html);
+			res.end();
+		}else{
+			res.send("找不到網頁!");
+			res.end();
+		}
+	});
+});
 
 app.post('/fileUpload', function (req, res) { // 存檔...
 	var uploadedFile = req.files.uploadingFile;
+	var tmpPath = uploadedFile.path;
+	//var targetPath = './' + uploadedFile.name; //tmp檔名
+	var targetPath = './' + uploadedFile.originalname; //原檔名
+	fs.rename(tmpPath, targetPath, function(err) { //複製到路徑
+        if (err) throw err;
+           	fs.unlink(tmpPath, function() {
+            console.log('File Uploaded to ' + targetPath + ' - ' + uploadedFile.size + ' bytes');
+        });
+    });
+    res.send('file upload is done.');
+    res.end();
+});
+
+app.post('/fileUpload_drap', function (req, res) { // 拖曳多檔存檔...
+	console.dir(req.files.file);
+	var uploadedFile = req.files.file;
 	var tmpPath = uploadedFile.path;
 	//var targetPath = './' + uploadedFile.name; //tmp檔名
 	var targetPath = './' + uploadedFile.originalname; //原檔名
