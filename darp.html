@@ -4,6 +4,10 @@
 	<meta charset="UTF-8">
 	<title>HTML5 Drag and Drop</title>
 	<style>
+		body {
+			font-family:Microsoft JhengHei;
+			color : #0C2D9C;
+		}
 		#drag_file{
 			width : 100%;
 			height : 300px;
@@ -11,10 +15,28 @@
 			border-width : 2px;
 			border-color : #000000;
 		}
+		.anfile {
+			width : 100%;
+			height : 20px;
+			border-style:solid;
+			border-width : 2px;
+			border-color : #000000;
+		}
+		.filename {
+			line-height : 20px;
+			padding-left : 10px;
+		}
+		.upstep {
+			width : 0%;
+			height : 20px;
+			background-color : #D632D6;
+		}
 	</style>
+	<script src="http://code.jquery.com/jquery-1.9.0.js"></script>
 	<script>
 		window.onload = function  () {
-			var drag_file = document.getElementById('drag_file');
+			var drag_file = document.getElementById('drag_file'),
+				allstep = document.getElementById('allstep');
 			drag_file.addEventListener("dragover", on_dragover,false);
 			drag_file.addEventListener("drop", on_drop,false);
 			/**
@@ -30,12 +52,18 @@
 			function on_drop (e) {
 				e.preventDefault();
 				var files = e.dataTransfer.files;
-				var num = files.length-1;
+				var num = files.length;
+				$('#allstep').empty();
+				for (var i = files.length - 1; i >= 0; i--) {
+					 $('<div class="filePage"><div class="filename">'+files[i].name+'</div><div class="anfile"><div class="upstep"></div></div></div>').appendTo("#allstep");
+				};
 				var fd,xhr;
+				num--;
 				upFile(num);
 				function upFile (key_) {
 					fd = new FormData();
 					fd.append('files',files[key_]);
+					console.dir(files[key_].name);
 	            	xhr = new XMLHttpRequest();
 	            	xhr.addEventListener("load", uploadComplete, false);
 	            	xhr.upload.addEventListener("progress", uploadProgress, false);
@@ -53,7 +81,9 @@
             	function uploadProgress (evt) {
             		if (evt.lengthComputable) {
 					    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-					    console.log(percentComplete.toString() + '%'); ;
+					    $($(".upstep")[num]).css("width",percentComplete.toString() + '%');
+					    console.dir($(".upstep")[num]);
+					    //console.log(percentComplete.toString() + '%'); ;
 					}
 					else {
 						console.log("unable to compute");
@@ -65,5 +95,6 @@
 </head>
 <body>
 	<div id="drag_file"></div>
+	<div id="allstep"></div>
 </body>
 </html>
