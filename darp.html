@@ -30,15 +30,18 @@
 			function on_drop (e) {
 				e.preventDefault();
 				var files = e.dataTransfer.files;
-				var fd = new FormData();
-				fd.append('file',files[0]);
-            	var xhr = new XMLHttpRequest();
-            	xhr.addEventListener("load", uploadComplete, false);
-            	xhr.open("POST", "/fileUpload_drap");
-            	console.dir(fd);
-  				xhr.send(fd);
+				var num = files.length;
+				var fd,xhr;
+				for (var i = 0; i < num; i++) {
+					fd = new FormData();
+					fd.append('files',files[i]);
+	            	xhr = new XMLHttpRequest();
+	            	xhr.addEventListener("load", uploadComplete, false);
+	            	xhr.open("POST", "/fileUpload_drap");
+	  				xhr.send(fd);
+				};
             	function uploadComplete (e) {
-            		drag_file.innerHTML = "uploadComplete!";
+            		drag_file.innerHTML = "uploadComplete!"+num;
             	}
 			}
 		}
