@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<meta http-equiv='cache-control' content='no-cache'>
 	<title>HTML5 Drag and Drop</title>
 	<style>
 		body {
@@ -54,13 +55,14 @@
 				var files = e.dataTransfer.files;
 				var num = files.length;
 				$('#allstep').empty();
-				for (var i = files.length - 1; i >= 0; i--) {
+				for (var i = 0; i < num; i++) {
 					 $('<div class="filePage"><div class="filename">'+files[i].name+'</div><div class="anfile"><div class="upstep"></div></div></div>').appendTo("#allstep");
 				};
 				var fd,xhr;
-				num--;
-				upFile(num);
+				i = 0;
+				upFile(i);
 				function upFile (key_) {
+					console.log("upFile "+key_);
 					fd = new FormData();
 					fd.append('files',files[key_]);
 					console.dir(files[key_].name);
@@ -71,18 +73,20 @@
 	  				xhr.send(fd);
 				}
             	function uploadComplete (e) {
-            		console.log("unable to compute "+num);
+            		xhr.removeEventListener("load", uploadComplete);
+            		xhr.upload.removeEventListener("progress", uploadProgress);
+            		console.log("unable to compute "+i);
             		drag_file.innerHTML = "uploadComplete!";
-            		if(num>0){
-            			num--;
-            			upFile(num);
+            		i+=1;
+            		console.log("uploadComplete num="+num+" i="+i);
+            		if(i<num){
+            			upFile(i);
             		}
             	}
             	function uploadProgress (evt) {
             		if (evt.lengthComputable) {
 					    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-					    $($(".upstep")[num]).css("width",percentComplete.toString() + '%');
-					    console.dir($(".upstep")[num]);
+					    $($(".upstep")[i]).css("width",percentComplete.toString() + '%');
 					    //console.log(percentComplete.toString() + '%'); ;
 					}
 					else {
