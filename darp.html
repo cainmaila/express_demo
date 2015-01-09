@@ -62,10 +62,8 @@
 				i = 0;
 				upFile(i);
 				function upFile (key_) {
-					console.log("upFile "+key_);
 					fd = new FormData();
 					fd.append('files',files[key_]);
-					console.dir(files[key_].name);
 	            	xhr = new XMLHttpRequest();
 	            	xhr.addEventListener("load", uploadComplete, false);
 	            	xhr.upload.addEventListener("progress", uploadProgress, false);
@@ -75,10 +73,11 @@
             	function uploadComplete (e) {
             		xhr.removeEventListener("load", uploadComplete);
             		xhr.upload.removeEventListener("progress", uploadProgress);
-            		console.log("unable to compute "+i);
-            		drag_file.innerHTML = "uploadComplete!";
+            		//console.log("unable to compute "+i);
+            		drag_file.innerHTML = "uploadComplete! "+i;
+            		$(".filename").eq(i).wrap("<a href="+e.target.responseText+">");
             		i+=1;
-            		console.log("uploadComplete num="+num+" i="+i);
+            		//console.log("uploadComplete num="+num+" i="+i);
             		if(i<num){
             			upFile(i);
             		}
@@ -86,8 +85,8 @@
             	function uploadProgress (evt) {
             		if (evt.lengthComputable) {
 					    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-					    $($(".upstep")[i]).css("width",percentComplete.toString() + '%');
-					    //console.log(percentComplete.toString() + '%'); ;
+					    //$($(".upstep")[i]).css("width",percentComplete.toString() + '%');
+					    $(".upstep").eq(i).css("width",percentComplete.toString() + '%');
 					}
 					else {
 						console.log("unable to compute");

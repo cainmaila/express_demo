@@ -9,7 +9,7 @@ app.use(bodyParser.json()); //解析
 app.use(bodyParser.urlencoded({ extended: true })); //解析
 app.use(multer()); //檔案上傳
 
-app.get('/', function (req, res) {
+app.get('/up', function (req, res) {
 	fs.readFile("./view.html", "utf8",function  (err,html) {
 		// 讀檔...
 		if(!err){
@@ -24,7 +24,7 @@ app.get('/', function (req, res) {
 /**
  * 拖曳
  */
-app.get('/d', function (req, res) {
+app.get('/', function (req, res) {
 	fs.readFile("./darp.html", "utf8",function  (err,html) {
 		// 讀檔...
 		if(!err){
@@ -48,23 +48,73 @@ app.post('/fileUpload', function (req, res) { // 存檔...
             console.log('File Uploaded to ' + targetPath + ' - ' + uploadedFile.size + ' bytes');
         });
     });
-    res.send('file upload is done.');
+    res.send('file upload is done. cain!!');
     res.end();
 });
 
 app.post('/fileUpload_drap', function (req, res) { // 拖曳多檔存檔...
 	var uploadedFile = req.files.files;
 	var tmpPath = uploadedFile.path;
-	//var targetPath = './' + uploadedFile.name; //tmp檔名
-	var targetPath = './' + uploadedFile.originalname; //原檔名
-	fs.rename(tmpPath, targetPath, function(err) { //複製到路徑
+	var filenameArr = uploadedFile.originalname.split("."),
+		fileEnd = filenameArr[filenameArr.length-1], //副檔名
+		fileId = Date.now() + ( ( Math.random()*20000 ) >>1 ),
+		targetPath = fileId + "." + fileEnd;
+	//var targetPath = './' + uploadedFile.originalname; //原檔名
+	fs.rename(tmpPath, "upfile/" + targetPath, function(err) { //複製到路徑
         if (err) throw err;
            	fs.unlink(tmpPath, function() {
-            console.log('File Uploaded to ' + targetPath + ' - ' + uploadedFile.size + ' bytes');
-        });
+           		console.log('File Uploaded to ' + targetPath + ' - ' + uploadedFile.size + ' bytes');
+        	});
     });
-    res.send('file upload is done.');
+    res.send( targetPath );
     res.end();
 });
 
+app.get("*",function  (req, res) {
+    var _file = "upfile" + req.originalUrl;
+    if(fs.exists(_file, function  (exists) {
+    	if(exists){
+    		res.download(_file); //檔案下載
+    	}else{
+    		res.send("沒有這個檔案!");
+    		res.end();
+    	}
+    }));
+});
 app.listen(3000);
+
+//駐列表===============================================================
+
+var list = [];
+function pushFile (_path) {
+	list.push(_path);
+	if(!isbusy){
+		runFile();
+	}
+}
+function  runFile() {
+	if(list.length>0){
+		ffmpegToMp4(list.shift());
+	}
+}
+
+//轉檔================================================================
+var ffmpeg = require('fluent-ffmpeg'),
+	isbusy = false;
+ffmpeg.setFfmpegPath("D:/ffmpeg/bin/ffmpeg.exe"); 
+ffmpeg.setFfprobePath("D:/ffmpeg/bin/ffprobe.exe"); 
+function ffmpegToMp4 (_path) {
+	var command = new ffmpeg(_path)
+				.inputFormat('mp4')
+				.on('error', function(err) {
+				    console.log('An error occurred: ' + err.message);
+				    isbusy = false;
+				  })
+				.on('progress', function(progress) {
+				    console.log('Processing a : ' + progress.percent + '% done');
+				  })
+				.on("end",function  () {
+					isbusy = false;
+				})
+				.save('output.mp4');
+}
