@@ -85,7 +85,8 @@ app.listen(3000);
 
 //駐列表===============================================================
 
-var list = [];
+var list = [],
+	isbusy = false;
 function pushFile (_path) {
 	list.push(_path);
 	if(!isbusy){
@@ -93,14 +94,31 @@ function pushFile (_path) {
 	}
 }
 function  runFile() {
+	isbusy = true;
+	var _filename = list.shift();
+	ffmpegToMp4( _filename ,error ,progress ,end );
+	function error (_message) {
+		// body...
+		nextFile();
+	}
+	function progress (_progressPa) {
+		// body...
+	}
+	function end (_mp4Name) {
+		// body...
+		nextFile();
+	}
+}
+function nextFile () {
 	if(list.length>0){
-		ffmpegToMp4(list.shift());
+		runFile();
+	}else{
+		isbusy = false;
 	}
 }
 
 //轉檔================================================================
-var ffmpeg = require('fluent-ffmpeg'),
-	isbusy = false;
+var ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath("D:/ffmpeg/bin/ffmpeg.exe"); 
 ffmpeg.setFfprobePath("D:/ffmpeg/bin/ffprobe.exe"); 
 function ffmpegToMp4 (_path , errfun_ , progressfun_ , endfun_ ) {
@@ -109,7 +127,6 @@ function ffmpegToMp4 (_path , errfun_ , progressfun_ , endfun_ ) {
 				.on('error', function(err) {
 				    //console.log('轉檔錯誤: ' + err.message);
 				    errfun_( err.message );
-				    isbusy = false;
 				  })
 				.on('progress', function(progress) {
 				    //console.log('轉檔進度 : ' + progress.percent + '% done');
@@ -117,8 +134,7 @@ function ffmpegToMp4 (_path , errfun_ , progressfun_ , endfun_ ) {
 				  })
 				.on("end",function  () {
 					endfun_( fileId + '.mp4' );
-					isbusy = false;
 				})
-				.save( fileId + '.mp4' );
+				.save( fileId + '.mp4' ),
 	fileId = Date.now() + ( ( Math.random()*20000 ) >>1 );
 }
