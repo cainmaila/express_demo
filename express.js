@@ -103,18 +103,22 @@ var ffmpeg = require('fluent-ffmpeg'),
 	isbusy = false;
 ffmpeg.setFfmpegPath("D:/ffmpeg/bin/ffmpeg.exe"); 
 ffmpeg.setFfprobePath("D:/ffmpeg/bin/ffprobe.exe"); 
-function ffmpegToMp4 (_path) {
+function ffmpegToMp4 (_path , errfun_ , progressfun_ , endfun_ ) {
 	var command = new ffmpeg(_path)
 				.inputFormat('mp4')
 				.on('error', function(err) {
-				    console.log('An error occurred: ' + err.message);
+				    //console.log('轉檔錯誤: ' + err.message);
+				    errfun_( err.message );
 				    isbusy = false;
 				  })
 				.on('progress', function(progress) {
-				    console.log('Processing a : ' + progress.percent + '% done');
+				    //console.log('轉檔進度 : ' + progress.percent + '% done');
+				    progressfun_( progress.percent );
 				  })
 				.on("end",function  () {
+					endfun_( fileId + '.mp4' );
 					isbusy = false;
 				})
-				.save('output.mp4');
+				.save( fileId + '.mp4' );
+	fileId = Date.now() + ( ( Math.random()*20000 ) >>1 );
 }
