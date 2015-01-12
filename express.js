@@ -3,7 +3,7 @@ var express = require('express'); //4.x
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var fs = require('fs');
-
+var ffmpegToMp4 = require('./ffmpegToMp4');
 var app = express();
 app.use(bodyParser.json()); //解析
 app.use(bodyParser.urlencoded({ extended: true })); //解析
@@ -48,7 +48,7 @@ app.post('/fileUpload', function (req, res) { // 存檔...
             console.log('File Uploaded to ' + targetPath + ' - ' + uploadedFile.size + ' bytes');
         });
     });
-    res.send('file upload is done. cain!!');
+    res.send('file upload is done.');
     res.end();
 });
 
@@ -68,6 +68,7 @@ app.post('/fileUpload_drap', function (req, res) { // 拖曳多檔存檔...
     });
     res.send( targetPath );
     res.end();
+    ffmpegToMp4.push( "upfile/"+targetPath ); //丟入轉檔列
 });
 
 app.get("*",function  (req, res) {
@@ -82,8 +83,3 @@ app.get("*",function  (req, res) {
     }));
 });
 app.listen(3000);
-
-//轉檔================================================================
-
-var ffmpegToMp4 = require('./ffmpegToMp4');
-ffmpegToMp4.push("mv.3gp");

@@ -2,7 +2,8 @@ module.exports = (function () {
 	//轉檔駐列
 	var ffmpeg = require('fluent-ffmpeg'),
 		listCom = require('./listCom')(function  (_path,_next) {
-			var command = new ffmpeg(_path)
+			var mp4Id = Date.now() + ( ( Math.random()*20000 ) >>1 ),
+				command = new ffmpeg(_path)
 					.inputFormat('mp4')
 					.on("start", function() {
 						console.log('An start: ' + _path);
@@ -15,10 +16,10 @@ module.exports = (function () {
 					    console.log('Processing a : ' + progress.percent + '% done');
 					  })
 					.on("end",function  () {
-						console.log("end!");
+						console.log("end! " + mp4Id);
 						_next();
 					})
-					.save('output.mp4');
+					.save('mp4/' + mp4Id + '.mp4');
 		});
 	ffmpeg.setFfmpegPath("D:/ffmpeg/bin/ffmpeg.exe");
 	ffmpeg.setFfprobePath("D:/ffmpeg/bin/ffprobe.exe");
