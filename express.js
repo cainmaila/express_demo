@@ -83,38 +83,7 @@ app.get("*",function  (req, res) {
 });
 app.listen(3000);
 
-//駐列表===============================================================
-
-var list = [];
-function pushFile (_path) {
-	list.push(_path);
-	if(!isbusy){
-		runFile();
-	}
-}
-function  runFile() {
-	if(list.length>0){
-		ffmpegToMp4(list.shift());
-	}
-}
-
 //轉檔================================================================
-var ffmpeg = require('fluent-ffmpeg'),
-	isbusy = false;
-ffmpeg.setFfmpegPath("D:/ffmpeg/bin/ffmpeg.exe"); 
-ffmpeg.setFfprobePath("D:/ffmpeg/bin/ffprobe.exe"); 
-function ffmpegToMp4 (_path) {
-	var command = new ffmpeg(_path)
-				.inputFormat('mp4')
-				.on('error', function(err) {
-				    console.log('An error occurred: ' + err.message);
-				    isbusy = false;
-				  })
-				.on('progress', function(progress) {
-				    console.log('Processing a : ' + progress.percent + '% done');
-				  })
-				.on("end",function  () {
-					isbusy = false;
-				})
-				.save('output.mp4');
-}
+
+var ffmpegToMp4 = require('./ffmpegToMp4');
+ffmpegToMp4.push("mv.3gp");
