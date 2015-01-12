@@ -71,15 +71,40 @@ app.post('/fileUpload_drap', function (req, res) { // 拖曳多檔存檔...
     ffmpegToMp4.push( "upfile/"+targetPath ); //丟入轉檔列
 });
 
-app.get("*",function  (req, res) {
-    var _file = "upfile" + req.originalUrl;
+//下載頁
+app.get("/download/:filename",function  (req, res) {
+	var _file = "upfile/" + req.params.filename;
     if(fs.exists(_file, function  (exists) {
     	if(exists){
-    		res.download(_file); //檔案下載
+    		fs.readFile("./download.html", "utf8",function  (err,html) {
+			// 讀檔...
+				if(!err){
+					res.send(html.replace(/{Id}/g ,req.params.filename));
+					//var _video = "<video src='../mp4/mv.mp4' controls >";
+					//res.send(html.replace(/{Video}/g ,_video));
+					res.end();
+				}else{
+					res.send("找不到網頁!");
+					res.end();
+				}
+			});
     	}else{
     		res.send("沒有這個檔案!");
     		res.end();
     	}
+    }));
+});
+
+//檔案下載
+app.get("*",function  (req, res) {
+    var _file = "upfile" + req.originalUrl;
+    if(fs.exists(_file, function  (exists) {
+	    	if(exists){
+	    		res.download(_file); //檔案下載
+	   		}else{
+	    		res.send("沒有這個檔案!");
+	    		res.end();
+	    	}
     }));
 });
 app.listen(3000);

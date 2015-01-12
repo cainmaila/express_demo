@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv='cache-control' content='no-cache'>
+	<title>Download {mp4Id}</title>
+	<style>
+		body {
+			font-family:Microsoft JhengHei;
+			color : #0C2D9C;
+		}
+		#download {
+			width : calc(100% - 100px);
+			height : 200px;
+			margin : 50px;
+			background-color : #80BDCA;
+			border-style : solid;
+			border-width : 1px;
+			border-color : #000000;
+			line-height : 200px;
+			font-size: 36px;
+			text-align : center;
+		}
+	</style>
+	<script src="http://code.jquery.com/jquery-1.9.0.js"></script>
+	<script>
+	$(document).ready(function  () {
+		// body...
+		$("#download").on("click",function  () {
+			// body...
+			location = "../{Id}";
+		})
+	})
+	</script>
+</head>
+<body>
+	<div id="download">下載 {Id}</div>
+	<div>{Video}</div>
+</body>
+</html>
