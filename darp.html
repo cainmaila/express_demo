@@ -75,7 +75,7 @@
             		xhr.upload.removeEventListener("progress", uploadProgress);
             		//console.log("unable to compute "+i);
             		drag_file.innerHTML = "uploadComplete! "+i;
-            		$(".filename").eq(i).wrap("<a href="+e.target.responseText+">");
+            		$(".filename").eq(i).wrap("<a href= download/"+e.target.responseText+">");
             		i+=1;
             		//console.log("uploadComplete num="+num+" i="+i);
             		if(i<num){
