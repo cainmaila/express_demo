@@ -23,18 +23,48 @@
 		}
 	</style>
 	<script src="http://code.jquery.com/jquery-1.9.0.js"></script>
+	<script src="http://127.0.0.1:6953/socket.io/socket.io.js"></script>
 	<script>
 	$(document).ready(function  () {
+		var socket = io.connect("http://127.0.0.1:6953"),
+			roomId = {IdHead};
+		socket.on("connection",function(data){
+			socket.emit("initRoom",{id:roomId});
+		});
+		socket.on("initRoom",function(data){
+			socket.emit("toRoom",{room:roomId,message:"ook!!"});
+		});
+		socket.on("data",function(data){
+			console.log(data);
+			if(data.progress == "end"){
+				$("#mp4player").html("<video src='/mp4/{IdMp4}' controls >");
+			}
+		});
 		// body...
 		$("#download").on("click",function  () {
 			// body...
 			location = "../{Id}";
-		})
+		});
+		$.get('/exists/{IdMp4}', function(data) {
+			if(data == false){
+				$.get("/inlist/{Id}", function  (data) {
+					if(data==-2){
+						console.log("沒有檔案");
+					}else if(data==-1){
+						console.log("轉檔中");
+					}else{
+						console.log(data);
+					}
+				});
+			}else{
+				$("#mp4player").html("<video src='/mp4/{IdMp4}' controls >")
+			}
+		});
 	})
 	</script>
 </head>
 <body>
 	<div id="download">下載 {Id}</div>
-	<div>{Video}</div>
+	<div id="mp4player"></div>
 </body>
 </html>

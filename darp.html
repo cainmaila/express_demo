@@ -52,6 +52,7 @@
 			 */
 			function on_drop (e) {
 				e.preventDefault();
+				$("#drag_file").hide(0);
 				var files = e.dataTransfer.files;
 				var num = files.length;
 				$('#allstep').empty();
