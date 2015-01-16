@@ -3,7 +3,8 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv='cache-control' content='no-cache'>
-	<title>HTML5 Drag and Drop</title>
+	<title>批次影音轉檔服務實驗 v0.1</title>
+	<meta property="og:image" content="http://54.64.186.201/fbimage/app2.jpg" />
 	<style>
 		body {
 			font-family:Microsoft JhengHei;
@@ -31,6 +32,10 @@
 			width : 0%;
 			height : 20px;
 			background-color : #D632D6;
+		}
+		.dele {
+			line-height : 20px;
+			padding-left : 10px;
 		}
 	</style>
 	<script src="http://code.jquery.com/jquery-1.9.0.js"></script>
@@ -76,7 +81,8 @@
             		xhr.upload.removeEventListener("progress", uploadProgress);
             		//console.log("unable to compute "+i);
             		drag_file.innerHTML = "uploadComplete! "+i;
-            		$(".filename").eq(i).wrap("<a href= download/"+e.target.responseText+">");
+            		$(".filename").eq(i).wrap("<a href= download/"+e.target.responseText+" target='_blank' >");
+            		$(".anfile").eq(i).after("<div class='dele'><a href= download/"+e.target.responseText+" target='_blank' >上傳完成，點連結請播放明細頁<a><div><hr><br>");
             		i+=1;
             		//console.log("uploadComplete num="+num+" i="+i);
             		if(i<num){
@@ -98,7 +104,7 @@
 	</script>
 </head>
 <body>
-	<div id="drag_file"></div>
+	<div id="drag_file">請把要上傳的檔案拉到這</div>
 	<div id="allstep"></div>
 </body>
 </html>

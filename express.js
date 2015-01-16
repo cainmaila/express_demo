@@ -131,7 +131,7 @@ app.get("/exists/:flie", function  (req, res) {
 
 //確認是否駐列
 app.get("/inlist/:path", function  (req, res) {
-	var _path = req.params.path;
+	var _path = "upfile/" + req.params.path;
 	var _data = ffmpegToMp4.chkStep(_path);
 	res.send(""+_data);
 	res.end();
@@ -149,8 +149,16 @@ app.get("*",function  (req, res) {
 	    	}
     });
 });
-app.listen(3000);
+app.listen(7000);
 
+ffmpegToMp4.onStart = function  ( _id ) {
+		console.log('onStart : '+ _id);
+		io.to( _id ).emit("data",{progress:"start"});
+	}
+ffmpegToMp4.onError = function  ( _id, err ) {
+		console.log("error! " + _id +" "+err.message);
+		io.to( _id ).emit("data",{progress:"error"});
+	}
 ffmpegToMp4.onProgress = function  ( _id, _progress ) {
 		// body...
 		console.log('Processing a : '+ _id + " " + _progress + '% done');

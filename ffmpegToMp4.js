@@ -7,12 +7,14 @@ module.exports = (function () {
 			//var mp4Id = Date.now() + ( ( Math.random()*20000 ) >>1 ),
 			var mp4Id = _path.split("/")[1].split(".")[0];
 				command = new ffmpeg(_path)
-					.inputFormat('mp4')
+					//.inputFormat('avi')
 					.on("start", function() {
-						console.log('An start: ' + _path);
+						app.onStart( mp4Id );
+						//console.log('An start: ' + _path);
 					  })
 					.on('error', function(err) {
-					    console.log('An error occurred: ' + err.message);
+						app.onError( mp4Id, err);
+					    //console.log('An error occurred: ' + err.message);
 					    _next();
 					  })
 					.on('progress', function(progress) {
@@ -40,6 +42,12 @@ module.exports = (function () {
 	}
 	this.onEnd = function  (_id) {
 		console.log("end! " + _id);
+	}
+	this.onError = function  (_id , err) {
+		console.log("error! " + _id +" "+err.message);
+	}
+	this.onStart = function  (_id) {
+		console.log("start! " + _id);
 	}
 	this.chkStep = listCom.chkStep;
 	return this;

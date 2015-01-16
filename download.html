@@ -21,6 +21,12 @@
 			font-size: 36px;
 			text-align : center;
 		}
+		#cant_play {
+			margin-left : 100px;
+			font-size: 36px;
+			color : #D11B3A;
+			line-height : 50px;
+		}
 	</style>
 	<script src="http://code.jquery.com/jquery-1.9.0.js"></script>
 	<script src="http://127.0.0.1:6953/socket.io/socket.io.js"></script>
@@ -28,6 +34,9 @@
 	$(document).ready(function  () {
 		var socket = io.connect("http://127.0.0.1:6953"),
 			roomId = {IdHead};
+		var clickDownload = function  () {
+			location = "../{Id}";
+		}
 		socket.on("connection",function(data){
 			socket.emit("initRoom",{id:roomId});
 		});
@@ -38,22 +47,30 @@
 			console.log(data);
 			if(data.progress == "end"){
 				$("#mp4player").html("<video src='/mp4/{IdMp4}' controls >");
+				$("#cant_play").html("");
+				$("#download").html("下載 {IdMp4}").on("click",function  () {
+					location = "../{IdMp4}";
+				});
+			}else if(data.progress == "error"){
+				$("#cant_play").html("這個檔案無法轉檔");
+			}else if(data.progress == "start"){
+				$("#cant_play").html("開始轉檔");
+			}else{
+				$("#cant_play").html("" + (data.progress>>1<<1) + " %");
 			}
 		});
 		// body...
-		$("#download").on("click",function  () {
-			// body...
-			location = "../{Id}";
-		});
+		
+		$("#download").on("click",clickDownload);
 		$.get('/exists/{IdMp4}', function(data) {
+			console.log(data);
 			if(data == false){
 				$.get("/inlist/{Id}", function  (data) {
-					if(data==-2){
-						console.log("沒有檔案");
-					}else if(data==-1){
-						console.log("轉檔中");
-					}else{
-						console.log(data);
+					console.log(data);
+					if(data==-1){
+						$("#cant_play").html("這個檔案無法轉檔");
+					}else if(data != -2){
+						$("#cant_play").html("檔案駐列中，請稍等");
 					}
 				});
 			}else{
@@ -66,5 +83,6 @@
 <body>
 	<div id="download">下載 {Id}</div>
 	<div id="mp4player"></div>
+	<div id='cant_play'><div>
 </body>
 </html>

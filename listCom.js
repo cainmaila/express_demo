@@ -11,12 +11,12 @@ module.exports = function ( command ) {
 		}	
 	}
 	function next () {
+		nowPath = "";
+		isBusy = false;
 		if(list.length>0){
 			isBusy = true;
 			nowPath = list.shift();
 			run( nowPath );
-		}else{
-			isBusy = false;
 		}
 	}
 	function run(_path) {
@@ -27,7 +27,7 @@ module.exports = function ( command ) {
 		if(isBusy){
 			if( _path == nowPath ){
 				return -2;
-			}else{
+			} else{
 				return list.indexOf(_path);
 			}
 		}else{
