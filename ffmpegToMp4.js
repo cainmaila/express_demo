@@ -8,6 +8,7 @@ module.exports = (function () {
 			var mp4Id = _path.split("/")[1].split(".")[0];
 				command = new ffmpeg(_path)
 					//.inputFormat('avi')
+					.size('720x?')
 					.on("start", function() {
 						app.onStart( mp4Id );
 						//console.log('An start: ' + _path);

@@ -3,40 +3,39 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv='cache-control' content='no-cache'>
-	<title>Download {mp4Id}</title>
+	<title>Download {IdMp4}</title>
+	<link rel="stylesheet" type="text/css" href="http://cainplay.com/dist/semantic.css">
 	<style>
 		body {
 			font-family:Microsoft JhengHei;
 			color : #0C2D9C;
+			margin : 20px;
 		}
 		#download {
-			width : calc(100% - 100px);
-			height : 200px;
-			margin : 50px;
-			background-color : #80BDCA;
-			border-style : solid;
-			border-width : 1px;
-			border-color : #000000;
-			line-height : 200px;
 			font-size: 36px;
-			text-align : center;
+			height : 100px;
+			margin-bottom : 20px;
+			line-height : 50px;
+			width : 100%;
 		}
 		#cant_play {
-			margin-left : 100px;
-			font-size: 36px;
-			color : #D11B3A;
-			line-height : 50px;
+			
+		}
+		#mp4player video{
+			width : 100%;
 		}
 	</style>
 	<script src="http://code.jquery.com/jquery-1.9.0.js"></script>
-	<script src="http://127.0.0.1:6953/socket.io/socket.io.js"></script>
+	<script src="http://cainplay.com/dist/semantic.js"></script>
+	<script src="http://192.168.0.108:6953/socket.io/socket.io.js"></script>
 	<script>
 	$(document).ready(function  () {
-		var socket = io.connect("http://127.0.0.1:6953"),
+		var socket = io.connect("http://192.168.0.108:6953"),
 			roomId = {IdHead};
 		var clickDownload = function  () {
 			location = "../{Id}";
 		}
+		var percentComplete = 0;
 		socket.on("connection",function(data){
 			socket.emit("initRoom",{id:roomId});
 		});
@@ -47,8 +46,8 @@
 			console.log(data);
 			if(data.progress == "end"){
 				$("#mp4player").html("<video src='/mp4/{IdMp4}' controls >");
-				$("#cant_play").html("");
-				$("#download").html("下載 {IdMp4}").on("click",function  () {
+				$("#step").remove();
+				$("#download").html("轉檔成功，下載MP4檔案").on("click",function  () {
 					location = "../{IdMp4}";
 				});
 			}else if(data.progress == "error"){
@@ -56,7 +55,10 @@
 			}else if(data.progress == "start"){
 				$("#cant_play").html("開始轉檔");
 			}else{
-				$("#cant_play").html("" + (data.progress>>1<<1) + " %");
+				percentComplete = data.progress>>1<<1;
+				$("#cant_play").html("轉檔中 " + percentComplete + " %");
+				$("#step").attr("data-percent", ""+percentComplete);
+				$(".bar").css("width",""+percentComplete+"%");
 			}
 		});
 		// body...
@@ -74,15 +76,19 @@
 					}
 				});
 			}else{
-				$("#mp4player").html("<video src='/mp4/{IdMp4}' controls >")
+				$("#mp4player").html("<video src='/mp4/{IdMp4}' controls autoplay>");
+				$("#step").remove();
+				$("#download").html("下載 {IdMp4}").on("click",function  () {
+					location = "../{IdMp4}";
+				});
 			}
 		});
 	})
 	</script>
 </head>
 <body>
-	<div id="download">下載 {Id}</div>
+	<div id="download" class="ui green button">下載原始檔案</div>
+	<div class="ui indicating demo progress active" data-percent="0" id="step"><p id="cant_play"><p><div class="bar" style="-webkit-transition: 300ms; transition: 300ms; width: 0%;"></div></div>
 	<div id="mp4player"></div>
-	<div id='cant_play'><div>
 </body>
 </html>

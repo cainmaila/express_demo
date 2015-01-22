@@ -45,6 +45,13 @@
 				allstep = document.getElementById('allstep');
 			drag_file.addEventListener("dragover", on_dragover,false);
 			drag_file.addEventListener("drop", on_drop,false);
+			drag_file.addEventListener("click", function  () {
+				$("#file").click().change(function(event) {
+					event.preventDefault();
+					$("#drag_file").hide(0);
+					fileUpload(event.target.files)
+				});
+			},false);
 			/**
 			 * 拖曳中
 			 */
@@ -59,6 +66,9 @@
 				e.preventDefault();
 				$("#drag_file").hide(0);
 				var files = e.dataTransfer.files;
+				fileUpload(files);
+			}
+			function fileUpload (files) {
 				var num = files.length;
 				$('#allstep').empty();
 				for (var i = 0; i < num; i++) {
@@ -107,5 +117,6 @@
 <body>
 	<div id="drag_file" class="ui secondary segment">請把要上傳的檔案拉到這</div>
 	<div id="allstep"></div>
+	<input type="file" name="file" id="file" size="20" style="display:none;">
 </body>
 </html>
