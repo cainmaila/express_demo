@@ -5,10 +5,20 @@ module.exports = (function () {
 		fs = require('fs-extra'), 
 		listCom = require('./listCom')(function  (_path,_next) {
 			//var mp4Id = Date.now() + ( ( Math.random()*20000 ) >>1 ),
-			var mp4Id = _path.split("/")[1].split(".")[0];
+			var mp4Id = _path.split("/")[1].split(".")[0],
+				wmimage = "logo.png",
 				command = new ffmpeg(_path)
 					//.inputFormat('avi')
-					.size('720x?')
+					//.size('720x480').aspect('4:3').autopad(true)
+					//.addOption('-vf', 'movie='+wmimage+ ' [watermark]; [in] [watermark] overlay=main_w-overlay_w-10:10 [out]') //浮水印
+					.complexFilter([
+							'scale=720:480[rescaled]',
+							"movie="+wmimage+"[mm]",
+							{
+							    filter: 'overlay', options: { x: "main_w-overlay_w-10", y: 10 },
+							    inputs: ['rescaled', 'mm'], outputs: 'redgreen'
+							}
+						],'redgreen')
 					.on("start", function() {
 						app.onStart( mp4Id );
 						//console.log('An start: ' + _path);

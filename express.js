@@ -73,7 +73,10 @@ app.post('/fileUpload_drap', function (req, res) { // 拖曳多檔存檔...
     if( fileEnd != "mp4" ){
     	ffmpegToMp4.push( "upfile/"+targetPath ); //丟入轉檔列
     }else{
-
+    	fs.rename("upfile/"+targetPath, "upfile/"+filenameArr[0]+"_."+fileEnd, function(err) { 
+    		 if (err) throw err;
+    		 ffmpegToMp4.push( "upfile/"+filenameArr[0]+"_."+fileEnd ); //丟入轉檔列
+    	})
     }
 });
 
